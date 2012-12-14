@@ -47,7 +47,7 @@ public class Config {
 	 * Post on http://www.near-reality.com/forums/programming/
 	 * if you need assistance changing these.
 	 */
-	public final static String JSON_LINK = "";
+	public final static String JSON_LINK = "http://www.qksnap.com/servers.json";
 	
 	/**
 	 * Cache Client Version
