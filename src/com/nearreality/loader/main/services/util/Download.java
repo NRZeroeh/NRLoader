@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URLConnection;
 import java.net.URL;
 import java.util.zip.ZipFile;
@@ -30,10 +32,18 @@ import java.util.List;
 import com.nearreality.loader.main.Config;
 import com.nearreality.loader.main.listeners.DownloadListener;
 import com.nearreality.loader.main.services.Updater;
+import com.nearreality.loader.main.util.Logger;
+import com.nearreality.loader.main.util.Logger.Level;
 
 public class Download {
+	/** Our Update Instance**/
 	public static Updater update;
 	
+	/** Start our download based on the download type
+	 * 
+	 * @param type - Download Type
+	 * @param up - Updater instance value
+	 */
     public void startDownload(DownloadType type,Updater up){
     	if(update == null)
     		update = up;
@@ -44,6 +54,7 @@ public class Download {
     			}
     		}
     	}
+    	/** Download Enums **/
 		public enum DownloadInstance {
 			CACHE(Config.getContents().get(0).getLink(), Config.getOutputDir(Config.getContents().get(0).getLink()), DownloadType.CACHE),
 			CLIENT(Config.getLaunchURL(),Config.getOutputDir(Config.getLaunchURL()), DownloadType.CLIENT),
@@ -56,13 +67,12 @@ public class Download {
 	        /** Download Type **/
 	        private DownloadType type;
 	        
+	        /** URL Link **/
 	        private String urlLink;
 	        
+	        /** Output Location **/
 	        private String output;
-	        
-	        public DownloadType getType(){
-	        	return type;
-	        }
+	       
 	        DownloadInstance(String link, String output, DownloadType type){
 	        	this.urlLink = link; 
 	        	this.output = output;
@@ -72,15 +82,25 @@ public class Download {
 	        private List<DownloadListener> downloadListeners = new ArrayList<DownloadListener>();
 	       
 	        	
-			 /** We are going to clean up some downloading code and call it wget **/
+	        /** Get Download Type **/
+	        public DownloadType getType(){
+	        	return type;
+	        }
+	        
+			 /**
+			  *  Download the files and activate downloadComplete when complete
+			  * @param type - DownloadType
+			  * @return
+			  */
 	        public boolean wget(final DownloadType type) {
-	        	addDownloadListener(new DownloadListener(){
+	        	this.addDownloadListener(new DownloadListener(){
 					@Override
 					public void downloadComplete() {
-						String fileToExtract = getUpdate().getCacheDir() + getUpdate().getArchivedName(urlLink);
+						String fileToExtract = Config.getCacheDir() + Config.getArchivedName(urlLink);
 			        	switch(type){
 			        		case CACHE:
 			        			unZipFile(fileToExtract);
+			        			System.out.println("Unzipping");
 			        			break;
 			        		case LAUNCHER:
 			        			getUpdate().drawText(100, "Launcher updated.");
@@ -121,12 +141,17 @@ public class Download {
 	            	    bufOut.flush();
 	            	    inStream.close();
 	        	} catch (Exception e) {
-	        		e.printStackTrace();
+	        		StringWriter sw = new StringWriter();
+	        		PrintWriter pw = new PrintWriter(sw);
+	        		e.printStackTrace(pw);
+	        		Logger.writeLog(Level.EXCEPTION,sw.toString());
 	        	} 	
+		        System.out.println("Firing event");
 	        	fireDownloadCompletedEvent();
 				return true;
 	        }
-	        
+
+	        /** Unzip our File **/
 	        public void unZipFile(String name) {
 	        	getUpdate().drawText(0,"Loading Files for Extracting..");
 	    		try {
@@ -141,11 +166,11 @@ public class Download {
 	    				getUpdate().drawText(percentage, "Extracting - " + percentage + "%");
 	    				ZipEntry Entry = (ZipEntry) Entries.nextElement();
 	    				if (Entry.isDirectory()) {
-	    					(new File(getUpdate().getCacheDir() + Entry.getName())).mkdir();
+	    					(new File(Config.getCacheDir() + Entry.getName())).mkdir();
 	    				} else {
 	    					getUpdate().writeStream(ZipFile.getInputStream(Entry),
 	    							new BufferedOutputStream(new FileOutputStream(
-	    									getUpdate().getCacheDir() + Entry.getName())));
+	    									Config.getCacheDir() + Entry.getName())));
 	    				}
 	    				}
 	    			ZipFile.close();
@@ -153,7 +178,11 @@ public class Download {
 	    			e.printStackTrace();
 	    		}
 	    	}
-	        
+	        /**
+	         *  Return our Download Name bsed on Download Type
+	         * @param type
+	         * @return
+	         */
 	        public String getDownloadName(DownloadType type){
 	        	switch(type){
 	    		case CACHE:
@@ -169,14 +198,21 @@ public class Download {
 	   
 	        }
 	        
-	        
+	        /** 
+	         *  Fire our Download complete Event to all event listeners
+	         */
 	        public void fireDownloadCompletedEvent(){
 	        	Iterator<DownloadListener> itr = downloadListeners.iterator(); 
+		        System.out.println("Firing evented");
 	        	while(itr.hasNext()) {
 	        		DownloadListener element = (DownloadListener) itr.next();
 	        		element.downloadComplete();
+	    	        System.out.println(element);
 	        	}
 	        }
+	        /** 
+	         *  Fire our Download Intrupption  Event to all event listeners
+	         */
 	        public void fireDownloadInterruptedEvent(){
 	        	Iterator<DownloadListener> itr = downloadListeners.iterator(); 
 	        	while(itr.hasNext()) {
@@ -186,7 +222,7 @@ public class Download {
 	        }
 	        
 	        public void addDownloadListener(DownloadListener in){
-	        	if(downloadListeners.contains(in)){
+	        	if(!downloadListeners.contains(in)){
 	        		downloadListeners.add(in);
 	        	}
 	        }

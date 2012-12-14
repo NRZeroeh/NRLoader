@@ -150,7 +150,7 @@ public class SplashScreen extends JWindow {
 		
 		UpdateItem item = new UpdateItem();
 		getDescLbl().setText("Configuring Launcher..");
-		Config.configure(item.getThemeURL(), item.getLaunchURL(), item.getCientURL(), item.getContents());
+		Config.configure(item.getThemeURL(), item.getLaunchURL(), item.getCientURL(), item.getContents(),item.getLaunchVer(),item.getCacheVer());
 	}
 	
 	/** Show Splash **/

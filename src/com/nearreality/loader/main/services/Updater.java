@@ -24,16 +24,19 @@ import com.nearreality.loader.main.gui.SplashScreen;
 import com.nearreality.loader.main.services.util.Download;
 import com.nearreality.loader.main.services.util.Download.DownloadType;
 
+/** Updater class, handles all update checking **/
 public class Updater {
+	/** Parent splash screen frame **/
 	private SplashScreen frame;
-	private final String CACHE_VERSION = "3";
-	private final String LAUNCHER_VERSION = "1.1";
-
+	/**
+	 *  Start our setup for checking for updates.
+	 * @param frame
+	 */
 	public Updater(SplashScreen frame) {
 		this.frame = frame;
 		init();
 	}
-
+	/** Begin checking for updates **/
 	private void init() {
 		drawText(0,"Checking Launcher Version.");
 		if (launcherUpdateNeeded()) {
@@ -53,16 +56,17 @@ public class Updater {
 		drawText(100, "Loading Launcher..");
 		this.frame.loadGame();
 	}
-	
+	/** Is a launcher update needed? **/
 	private boolean launcherUpdateNeeded() {
-		return Config.LAUNCH_VER.equals(LAUNCHER_VERSION);
+		return Config.LAUNCH_VER.equals(Config.getLaunchVer());
 	}
 
+	/** is an update needed? **/
 	private boolean updateNeeded() {
 			try {
-			File location = new File(getCacheDir());
-			File version = new File(getCacheDir() + "/cacheVersion"
-					+ CACHE_VERSION + ".dat");
+			File location = new File(Config.getCacheDir());
+			File version = new File(Config.getCacheDir() + "/cacheVersion"
+					+ Config.getCacheVer() + ".dat");
 
 			if (!location.exists()) {
 				location.mkdirs();
@@ -81,17 +85,7 @@ public class Updater {
 
 	}
 
-	public String getArchivedName(String link) {
-		int lastSlashIndex = link.lastIndexOf('/');
-		if (lastSlashIndex >= 0
-				&& lastSlashIndex < link.length() - 1) {
-			return link.substring(lastSlashIndex + 1);
-		} else {
-		}
-		return "";
-	}
-
-
+	/** Write stream **/
 	public void writeStream(InputStream In, OutputStream Out)
 			throws IOException {
 		byte Buffer[] = new byte[4096];
@@ -103,23 +97,18 @@ public class Updater {
 		Out.close();
 	}
 	
-	public String getCacheDir()
-    {
-        boolean exists = (new File(System.getProperty("user.home") + "/.NR2006cache/")).exists();
-        if (exists) {
-           return System.getProperty("user.home") + "/.NR2006cache/";
-        } else {
-            File f = new File(System.getProperty("user.home") + "/.NR2006cache/");
-            f.mkdir();
-            return System.getProperty("user.home") + "/.NR2006cache/";
-        }
-    }
 	
+	/** Get our Frame **/
+	public SplashScreen getFrame(){
+		return this.frame;
+	}
+	
+	/** Update our progress bar **/
     public void drawText(int i, String string) {
-    	this.frame.getProgressBar().setValue(i);
-    	this.frame.getDescLbl().setText(string);
-    	this.frame.validate();
-    	this.frame.repaint();
+    	getFrame().getProgressBar().setValue(i);
+    	getFrame().getDescLbl().setText(string);
+    	getFrame().validate();
+    	getFrame().repaint();
 	}
   
 }
