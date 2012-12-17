@@ -15,8 +15,12 @@
 
 package com.nearreality.loader.main;
 
+import java.awt.Image;
 import java.io.File;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import com.nearreality.loader.main.services.data.Content;
 
@@ -25,27 +29,8 @@ public class Config {
 	/** Client Update Variables **/
 	
 	
-	/** Json link to be read from Updater.java
-	 * Format for the JSON OBject should look like the following
-	 *{
-                 "hash": "fe52aba5080fc48d1d3adb75373154e3c8b89db8500f304e979a0313808704d3",
-                 "cachever" : (Cache Version),
-                 "launchv" : "1.1",
-                 "launcherurl" : "http://www.qksnap.com/nrlauncheross.jar",
-                 "clienturl" : "(Client URL's)",
-				 "themeurl" :  "(Theme.jar location on a webserver)",
-                 "contents" : [
-                				{
-                 				    "id" : "0",
-                 				    "ip" : "(Cache Location)"
-                 				  }, {
-                 				    "id" : "1",
-                 				    "ip" : "(Cache Location)"
-                 				  }]
-		} 
-	
-	 * Post on http://www.near-reality.com/forums/programming/
-	 * if you need assistance changing these.
+	/**
+	 *  Json link to be read from Updater.java
 	 */
 	public final static String JSON_LINK = "http://www.qksnap.com/servers.json";
 	

@@ -17,7 +17,9 @@ package com.nearreality.loader.main.services.util;
 import java.io.File;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLConnection;
@@ -146,7 +148,6 @@ public class Download {
 	        		e.printStackTrace(pw);
 	        		Logger.writeLog(Level.EXCEPTION,sw.toString());
 	        	} 	
-		        System.out.println("Firing event");
 	        	fireDownloadCompletedEvent();
 				return true;
 	        }
@@ -168,7 +169,7 @@ public class Download {
 	    				if (Entry.isDirectory()) {
 	    					(new File(Config.getCacheDir() + Entry.getName())).mkdir();
 	    				} else {
-	    					getUpdate().writeStream(ZipFile.getInputStream(Entry),
+	    					writeStream(ZipFile.getInputStream(Entry),
 	    							new BufferedOutputStream(new FileOutputStream(
 	    									Config.getCacheDir() + Entry.getName())));
 	    				}
@@ -177,6 +178,18 @@ public class Download {
 	    		} catch (Exception e) {
 	    			e.printStackTrace();
 	    		}
+	    	}
+	        
+	    	/** Write stream **/
+	    	public void writeStream(InputStream In, OutputStream Out)
+	    			throws IOException {
+	    		byte Buffer[] = new byte[4096];
+	    		int Len;
+	    		while ((Len = In.read(Buffer)) >= 0) {
+	    			Out.write(Buffer, 0, Len);
+	    		}
+	    		In.close();
+	    		Out.close();
 	    	}
 	        /**
 	         *  Return our Download Name bsed on Download Type
@@ -203,11 +216,9 @@ public class Download {
 	         */
 	        public void fireDownloadCompletedEvent(){
 	        	Iterator<DownloadListener> itr = downloadListeners.iterator(); 
-		        System.out.println("Firing evented");
 	        	while(itr.hasNext()) {
 	        		DownloadListener element = (DownloadListener) itr.next();
 	        		element.downloadComplete();
-	    	        System.out.println(element);
 	        	}
 	        }
 	        /** 

@@ -68,7 +68,7 @@ public class MainFrame extends JFrame {
 			setBounds(x, y, width, height);
 			newsPane = new NewsPane(this);
 			newsPane.setBounds(50, 30, 581,195);
-			launchIcon = new JLabel(new ImageIcon("imgs/logotext.png"));
+			launchIcon = new JLabel(new ImageIcon(getClass().getResource("/logotext.png")));
 			launchIcon.setBounds(225,5,233,35);
 			add(newsPane);
 			add(launchIcon);
@@ -88,7 +88,7 @@ public class MainFrame extends JFrame {
 			x += 300;
 			add(launchGameButton[i]);
 		}
-			JLabel orTxt = new JLabel(new ImageIcon("imgs/ortext.png"));
+			JLabel orTxt = new JLabel(new ImageIcon(getClass().getResource("/ortext.png")));
 			orTxt.setBounds(325, 275, 43,40);
 			add(orTxt);
 	}

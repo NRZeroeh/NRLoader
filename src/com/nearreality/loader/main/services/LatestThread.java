@@ -28,6 +28,16 @@ import com.nearreality.loader.main.gui.MainFrame;
 import com.nearreality.loader.main.gui.SplashScreen;
 import com.nearreality.loader.main.services.data.ThreadData;
 
+/**
+ *  Grabbing latest threads from our forums, including title, name, author and content.
+ *  This class utilizes a lot of "Terrible" designed regex expressions. I believe VBulletin has a webservice extension 
+ *  we just didn't have it enabled at the time of writing.
+ *  
+ *  Feel free to rewrite this class
+ *  
+ * @author Patrick "zeroeh"
+ *
+ */
 public class LatestThread {
 	/** String to VBulletin */
 	private final String WEBSITE_URL = "http://www.near-reality.com/forums/news/";
@@ -39,12 +49,21 @@ public class LatestThread {
 	private final String REGEX_THREAD_CONTENT ="<div class=\"blizzquote\">(.*)";
 	/** This variable is the index of your latest news post **/
 	private final int THREADINDEX = 3;
-	
+	/** Splash Screen **/
 	private SplashScreen splash;
-	
+
 	public LatestThread(SplashScreen splash){
 		this.splash = splash;
 	}
+	
+	/** 
+	 *  Read the url link,
+	 *  do some fun screenscrapping then url following then screenscrap again
+	 *  
+	 *  *Warning* this method is messy and will be rewritten 
+	 * 
+	 * @return ThreadData List
+	 */
 	public List<ThreadData> getData(){
 		List<ThreadData> out = new ArrayList<ThreadData>();
 		try{
@@ -57,10 +76,10 @@ public class LatestThread {
 				if(in != null){
 					out.add(in);
 					count++;
-					this.splash.getProgressBar().setValue(this.splash.getProgressBar().getValue() + 33);
-					this.splash.getDescLbl().setText("Loading News Data.");
-					this.splash.repaint();
-					this.splash.validate();
+					this.getScreen().getProgressBar().setValue(this.splash.getProgressBar().getValue() + 33);
+					this.getScreen().getDescLbl().setText("Loading News Data.");
+					this.getScreen().repaint();
+					this.getScreen().validate();
 				}
 			}
 			reader.close();
@@ -91,6 +110,11 @@ public class LatestThread {
     	}
 		return null;
 	}
+	/** Grab content from our News forums 
+	 * NR Uses a custom theme that allows us to have different text compared to other users
+	 * @param urlLink
+	 * @return
+	 */
 	private String getContent(String urlLink){
 		  String output = null;
 		  try {
@@ -115,5 +139,8 @@ public class LatestThread {
 		return output;
 	}
 
+	private SplashScreen getScreen(){
+		return this.splash;
+	}
 }
 

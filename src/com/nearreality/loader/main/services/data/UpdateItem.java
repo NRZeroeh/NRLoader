@@ -15,7 +15,6 @@
 package com.nearreality.loader.main.services.data;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,18 +26,39 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
+
+
+import com.nearreality.loader.main.Config;
 
 /** 
  * 
  *
  * This class represents Json Data which we will parse and retrieve from the 
  * web server indicating cache update data
- *  
- *  
- **/
+  * Format for the JSON OBject should look like the following
+	 *{
+                 "hash": "fe52aba5080fc48d1d3adb75373154e3c8b89db8500f304e979a0313808704d3",
+                 "cachever" : (Cache Version),
+                 "launchv" : "1.1",
+                 "launcherurl" : "http://www.qksnap.com/nrlauncheross.jar",
+                 "clienturl" : "(Client URL's)",
+				 "themeurl" :  "(Theme.jar location on a webserver)",
+                 "contents" : [
+                				{
+                 				    "id" : "0",
+                 				    "ip" : "(Cache Location)"
+                 				  }, {
+                 				    "id" : "1",
+                 				    "ip" : "(Cache Location)"
+                 				  }]
+		} 
+	
+	 * Post on http://www.near-reality.com/forums/programming/
+	 * if you need assistance changing these.
+	 */
 public class UpdateItem {
 
+	/** Our Json Object will return the following **/
 	private String _hash;
 	private String _cacheVer;
 	private String _launchVer;
@@ -53,7 +73,7 @@ public class UpdateItem {
 	
 	private void initalize(){
 		try {
-			JSONObject jsonObject = readJsonFromUrl("http://www.qksnap.com/servers.json");
+			JSONObject jsonObject = readJsonFromUrl(Config.JSON_LINK);
 			setHash((String) jsonObject.get("hash"));
 			setCacheVer(Long.toString((Long) jsonObject.get("cachever")));
 			setLaunchVer((String) jsonObject.get("launchv"));

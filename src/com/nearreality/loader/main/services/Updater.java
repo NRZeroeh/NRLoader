@@ -42,17 +42,17 @@ public class Updater {
 		if (launcherUpdateNeeded()) {
 			new Download().startDownload(DownloadType.LAUNCHER,this);
 		}
+		drawText(0,"Checking Cache....");
+		if(updateNeeded()){
+			new Download().startDownload(DownloadType.CACHE,this);
+		}
+		drawText(100,"Cache Check Complete.....");
 		drawText(0,"Grabbing Client..");
 		new Download().startDownload(DownloadType.CLIENT,this);
         drawText(100,"Grabbed Client...");
 		drawText(0,"Grabbing Themes..");
 		new Download().startDownload(DownloadType.THEME,this);
         drawText(100,"Grabbed Themes...");
-		drawText(0,"Checking Cache....");
-		if(updateNeeded()){
-			new Download().startDownload(DownloadType.CACHE,this);
-		}
-		drawText(100,"Cache Check Complete.....");
 		drawText(100, "Loading Launcher..");
 		this.frame.loadGame();
 	}
@@ -85,17 +85,6 @@ public class Updater {
 
 	}
 
-	/** Write stream **/
-	public void writeStream(InputStream In, OutputStream Out)
-			throws IOException {
-		byte Buffer[] = new byte[4096];
-		int Len;
-		while ((Len = In.read(Buffer)) >= 0) {
-			Out.write(Buffer, 0, Len);
-		}
-		In.close();
-		Out.close();
-	}
 	
 	
 	/** Get our Frame **/
