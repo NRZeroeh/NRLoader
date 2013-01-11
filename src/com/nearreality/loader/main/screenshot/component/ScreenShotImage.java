@@ -18,6 +18,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
@@ -25,7 +26,7 @@ import com.nearreality.loader.main.Config;
 import com.nearreality.loader.main.screenshot.gui.ImagePanel;
 import com.nearreality.loader.main.screenshot.gui.MainFrame;
 
-public class ScreenShotImage extends JButton {
+public class ScreenShotImage extends JLabel {
 	/** Paint our Btn **/
     private Painter painter;
     /** File Name **/
@@ -136,6 +137,9 @@ public class ScreenShotImage extends JButton {
     }
     public void paintComponent(Graphics g) {
        super.paintComponent(g);
+       long 		start = System.currentTimeMillis();
+		try{
+		// Delay depending on how far behind current time we are.
        Graphics2D g2d = (Graphics2D)g;
 		if(selected){
 			g2d.setColor(Color.RED);
@@ -143,6 +147,11 @@ public class ScreenShotImage extends JButton {
 			g2d.fillRect(0, 0, 161,106);
 		}
        painter.paint(g);
+       start += (1000/45);
+       Thread.sleep(Math.max(0, start - System.currentTimeMillis()));
+   } catch(Exception e){
+ 	  e.printStackTrace();
+   }
     }
 
     public int getId() {
